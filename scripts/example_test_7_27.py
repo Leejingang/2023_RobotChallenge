@@ -32,6 +32,7 @@ class Cmd:
 	MoveGraspDetect = 14
 	MovePlaseDetect = 15
 	MoveUpPosition = 16
+	RotationTest = 17
 
 class Camera(object):
 	def __init__(self, topic="/topic"):
@@ -70,7 +71,7 @@ def key_input_func():
 		print(" 14 :  MoveGraspDetect Command")
 		print(" 15 :  MovePlaseDetect Command")
 		print(" 16 :  MoveUpPosition Command")
-
+		print(" 17 :  rotation test")
 
 		key_value = input()
 
@@ -106,6 +107,9 @@ def key_input_func():
    
 		elif key_value == '16':
 			cmd = Cmd.MoveUpPosition
+
+		elif key_value == '17':
+			cmd = Cmd.RotationTest
    
 		while cmd != 0:
 			sleep(0.001)
@@ -183,7 +187,7 @@ if __name__ == '__main__':
 	cnt_joint = 0
 	cnt_pose = 0
 
-	SetVelocity(10)
+	SetVelocity(5)
  
  
 	camera = Camera(topic="/topic")
@@ -258,6 +262,25 @@ if __name__ == '__main__':
 					moveL_command([[1,0,0],[0,0,1],[0,1,0]], [current_T_matrix[3], current_T_matrix[7], 0.5])
 
 					cmd = 0
+     
+				elif cmd == Cmd.RotationTest:
+					a = np.array([[1,0,0], [0,0,1], [0,1,0]])
+					trans_a = np.transpose(a)
+					'''
+					#b : [[0 -c b]
+     					  [c 0 -a]
+            			  [-b a 0]]
+                 	'''
+					b = np.array([[0, -0.7924100160598755, 0.23184801638126373 ],
+                   				  [0.7924100160598755, 0, -0.5642099380493164 ],
+                   				  [-0.23184801638126373, 0.5642099380493164, 0 ]])
+     
+					c = np.dot(trans_a, b)
+     
+					c_list = c.tolist()
+					print(c_list)
+					moveL_command(c_list, [current_T_matrix[3], current_T_matrix[7], 0.5])
+
 
 			sleep(1)
    
